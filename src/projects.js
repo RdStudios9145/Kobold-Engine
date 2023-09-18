@@ -28,7 +28,9 @@ const newProject = (event, name, projPath) => {
 	})
 	fs.writeFileSync(path.join(dataPath, "projects.json"), JSON.stringify(current));
 
-	const proj = (str) => path.join(projPath, str)
+	const proj = (str) => path.join(projPath, "/" + name, str);
+	console.log(proj(""), proj("Assets"), proj("ProjectSettings/.json"));
+	fs.mkdirSync(proj(""));
 	fs.writeFileSync(proj("Proj.kbld"), JSON.stringify({ name: name }));
 	fs.mkdirSync(proj("Assets"));
 	fs.mkdirSync(proj("Plugins"));
@@ -39,7 +41,12 @@ const newProject = (event, name, projPath) => {
 			{
 				name: "assets",
 				position: [0, 0],
-				size: [100, 100]
+				size: [300, 700]
+			},
+			{
+				name: "hierarchy",
+				position: [500, 100],
+				size: [300, 700]
 			}
 		]
 	}))
@@ -53,7 +60,7 @@ const open = (event, project) => {
 }
 
 const loadingProject = () => {
-	const settings = fs.readFileSync(path.join(cwp.path, "ProjectSettings/.json"));
+	const settings = fs.readFileSync(path.join(cwp.path, cwp.name, "ProjectSettings/.json"));
 	return {
 		project: cwp,
 		settings: JSON.parse(settings),
