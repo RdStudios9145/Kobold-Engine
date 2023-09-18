@@ -1,11 +1,11 @@
 const windows = {};
-console.log("hi")
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
 const a = async () => {
 	const data = await window.electronAPI.loadedProject();
 
 	for (const cwindow of data.settings.windows) {
-		console.log(cwindow);
 		const wind = await window.electronAPI.createWindow(cwindow);
 		windows[cwindow.name] = wind;
 	}

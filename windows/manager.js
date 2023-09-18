@@ -12,6 +12,8 @@ const createWindow = (event, window) => {
 		x: window.position[0],
 		y: window.position[1]
 	});
+	wind.loadFile("pages/window.html");
+	wind.webContents.send("window-info", renderers[window.name + ".js"].render());
 	return wind;
 }
 
