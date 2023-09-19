@@ -78,10 +78,16 @@ const getPath = () => {
 	return dialog[0];
 }
 
+const readProjDirSync = (event, dir, config) => {
+	const cdir = path.join(cwp.path, cwp.name, dir);
+	return fs.readdirSync(cdir, config);
+}
+
 module.exports = {
 	getProjects: getProjects,
 	newProject: newProject,
 	open: open,
 	getPath: getPath,
-	loadingProject: loadingProject
+	loadingProject: loadingProject,
+	readProjDirSync: readProjDirSync,
 }

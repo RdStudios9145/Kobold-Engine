@@ -4,7 +4,7 @@
   "description": "A little js-based game engine running on electron",
   "main": "index.js",
   "author": "RdStudios <77551723+RdStudios9145@users.noreply.github.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "private": false,
   "devDependencies": {
     "electron": "^26.2.1"

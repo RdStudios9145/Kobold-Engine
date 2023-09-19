@@ -7,4 +7,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 	loadedProject: () => electron.ipcRenderer.invoke("loading:project"),
 	createWindow: (window) => electron.ipcRenderer.invoke("loading:createwindow", window),
 	getPath: () => electron.ipcRenderer.invoke("new:getpath"),
+	readDirSync: (dir, config) => electron.ipcRenderer.invoke("fs:readdirsync", dir, config),
+	readProjDirSync: (dir, config) => electron.ipcRenderer.invoke("fs:readprojdirsync", dir, config),
 });

@@ -2,6 +2,7 @@ const electron = require("electron");
 const path = require("path");
 const projects = require("./src/projects");
 const window_manager = require("./windows/manager");
+const fs = require("fs");
 
 const createWindow = () => {
 	const win = new electron.BrowserWindow({
@@ -25,6 +26,9 @@ electron.app.whenReady().then(() => {
 	electron.ipcMain.handle("loading:createwindow", window_manager.createWindow);
 	electron.ipcMain.handle("loading:project", projects.loadingProject);
 	electron.ipcMain.handle("new:getpath", projects.getPath);
+
+	electron.ipcMain.handle("fs:readdirsync", fs.readdirSync);
+	electron.ipcMain.handle("fs:readprojdirsync", projects.readProjDirSync);
 
 	createWindow();
 
