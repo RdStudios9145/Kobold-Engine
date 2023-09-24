@@ -11,14 +11,39 @@
 
 		#container {
 			display: grid;
+            grid-template-columns: repeat(10, 80px);
+            column-gap: 10px;
 		}
+
+        .menu {
+            display: none;
+            flex-direction: column;
+            top: 0;
+            left: 0;
+            position: absolute;
+        }
+
+        #file {
+            position: relative;
+        }
+
+        p {
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
 	</style>
 </head>
 <body>
-	<div id="container">
-
-	</div>
-
+	<div id="container"></div>
+    <div id="contextmenu" class="menu">
+        <button id="newfolder">New Folder</button>
+        <button id="newcomponent">New Component</button>
+        <button id="newcontroller">New Controller</button>
+        <button id="newresource">New Resource</button>
+        <div id="file" class="menu">
+            <button id="rename">Rename</button>
+        </div>
+    </div>
 	<script src="./renderers/assets.js"></script>
 </body>
 </html>

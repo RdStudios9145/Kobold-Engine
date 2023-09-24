@@ -9,4 +9,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 	getPath: () => electron.ipcRenderer.invoke("new:getpath"),
 	readDirSync: (dir, config) => electron.ipcRenderer.invoke("fs:readdirsync", dir, config),
 	readProjDirSync: (dir, config) => electron.ipcRenderer.invoke("fs:readprojdirsync", dir, config),
+	mkdir: (dir, config) => electron.ipcRenderer.invoke("fs:mkdir", dir, config),
+	writeFile: (dir, contents) => electron.ipcRenderer.invoke("fs:writefile", dir, contents),
+	openFile: (dir) => electron.ipcRenderer.send("assets:openfile", dir),
+	newobj: (parent, name, id) => electron.ipcRenderer.send("hierarchy:new", parent, name),
+	getHierarchy: () => electron.ipcRenderer.invoke("hierarchy:get"),
 });

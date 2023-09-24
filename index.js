@@ -29,6 +29,11 @@ electron.app.whenReady().then(() => {
 
 	electron.ipcMain.handle("fs:readdirsync", fs.readdirSync);
 	electron.ipcMain.handle("fs:readprojdirsync", projects.readProjDirSync);
+	electron.ipcMain.handle("fs:mkdir", projects.mkdir);
+	electron.ipcMain.handle("fs:writefile", projects.writeFile);
+	electron.ipcMain.on("assets:openfile", projects.openFile);
+	electron.ipcMain.on("hierarchy:new", projects.newobj);
+	electron.ipcMain.handle("hierarchy:get", projects.getHierarchy);
 
 	createWindow();
 
