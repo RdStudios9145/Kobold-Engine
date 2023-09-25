@@ -5,7 +5,8 @@ const exec = require("child_process").exec;
 
 /**
  * @typedef {Object} Obj
- * @property {Obj[]} children
+ * @property {Number[]} children
+ * @property {Object[]} Components
  * @property {Number} id
  * @property {String} name
  */
@@ -13,7 +14,6 @@ const exec = require("child_process").exec;
 /**
  * @typedef {Object} Hierarchy
  * @property {Obj[]} children
- * @property {Number} elements 
  * @property {-1} id
  */
 
@@ -53,7 +53,6 @@ const newProject = (event, name, projPath) => {
 	/** @type {Hierarchy} */
 	const hierarchy = {
 		id: -1,
-		elements: 0,
 		children: [],
 	};
 
@@ -153,21 +152,19 @@ const getHierarchy = (event) => {
 }
 
 const newobj = (event, parent, name, id) => {
-	cwp.hierarchy.elements++;
-
 	/** @type {Obj} */
 	const obj = {
 		children: [],
-		id: cwp.hierarchy.elements - 1,
+		Components: [],
+		id: id,
 		name: name,
 	};
-	
-	if (parent === -1) {
-		cwp.hierarchy.children.push(obj);
-		return;
-	}
 
-	traverseHierarchy(cwp.hierarchy, parent, obj);
+	cwp.hierarchy.children.push(obj);
+
+	if (parent === -1) return;
+
+	cwp.hierarchy.children[parent].children.push(id);
 }
 
 /**
