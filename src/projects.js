@@ -163,6 +163,7 @@ const newobj = (event, parent, name, id) => {
 	cwp.hierarchy.children.push(obj);
 
 	if (parent === -1) return;
+	console.log(parent, name, id);
 
 	cwp.hierarchy.children[parent].children.push(id);
 }

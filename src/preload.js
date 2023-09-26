@@ -12,6 +12,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 	mkdir: (dir, config) => electron.ipcRenderer.invoke("fs:mkdir", dir, config),
 	writeFile: (dir, contents) => electron.ipcRenderer.invoke("fs:writefile", dir, contents),
 	openFile: (dir) => electron.ipcRenderer.send("assets:openfile", dir),
-	newobj: (parent, name, id) => electron.ipcRenderer.send("hierarchy:new", parent, name),
+	newobj: (parent, name, id) => electron.ipcRenderer.send("hierarchy:new", parent, name, id),
 	getHierarchy: () => electron.ipcRenderer.invoke("hierarchy:get"),
 });
