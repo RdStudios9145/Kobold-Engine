@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kobold Inspector</title>
+	<style>
+		#components div:nth-child(1) {
+			border-top: 2px solid black;
+		}
+
+		#components > div {
+			border-bottom: 2px solid black;
+			padding-bottom: 15px;
+		}
+
+		#components {
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div id="name" class="container">
+		<input id="objname" type="text" value="">
+		<button id="lock">Lock</button>
+	</div>
+	<div id="components" class="container"></div>
+	<div id="new">
+		<button onclick="openComponentMenu()">Add Component</button>
+		<div id="menu" style="display: none;"></div>
+	</div>
+
+	<script src="renderers/inspector.js"></script>
+</body>
+</html>

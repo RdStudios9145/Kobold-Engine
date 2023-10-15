@@ -33,11 +33,11 @@ const render = async () => {
 		casset.style.flexDirection = "column";
 		const img = document.createElement("img");
 		
-		if (asset[0].endsWith(".comp"))
+		if (asset[0].endsWith(".comp.ts"))
 			img.src = "../imgs/component.svg";
-		else if (asset[0].endsWith(".js"))
-			img.src = "../imgs/system.svg";
-		else if (asset[0].endsWith(".res"))
+		// else if (asset[0].endsWith(".js"))
+			// img.src = "../imgs/system.svg";
+		else if (asset[0].endsWith(".res.ts"))
 			img.src = "../imgs/res.svg"
 		else
 			img.src = "../imgs/folder.svg";
@@ -109,17 +109,19 @@ document.getElementById("newfolder").addEventListener("click", (e) => {
 });
 
 document.getElementById("newcomponent").addEventListener("click", () => {
-	window.electronAPI.writeFile("Assets" + cwd + "/CompName.comp", `Struct CompName {\n\t\n}`);
+	window.electronAPI.writeFile("Assets" + cwd + "/CompName.comp.ts", `class CompName {\n\t\n}`);
 	render();
 });
 
 document.getElementById("newcontroller").addEventListener("click", (e) => {
-	window.electronAPI.writeFile("Assets" + cwd + "/ContName.js", "function ContName {\n\t\n}");
+	// window.electronAPI.writeFile("Assets" + cwd + "/ContName.js", "function ContName {\n\t\n}");
 	render();
 });
 
 document.getElementById("newresource"),addEventListener("click", (e) => {
-	window.electronAPI.writeFile("Assets" + cwd + "/ResName.res", "Struct ResName {\n\t\n}");
+	// console.log("heyyo");
+	window.electronAPI.writeFile("Assets" + cwd + "/ResName.res.ts", "class ResName {\n\t\n}");
+	render();
 });
 
 document.getElementById("rename").addEventListener("click", (e) => {
@@ -127,3 +129,5 @@ document.getElementById("rename").addEventListener("click", (e) => {
 })
 
 window.addEventListener("resize", resize);
+
+window.electronAPI.handleRender((e) => render());

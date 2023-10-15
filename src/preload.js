@@ -14,4 +14,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 	openFile: (dir) => electron.ipcRenderer.send("assets:openfile", dir),
 	newobj: (parent, name, id) => electron.ipcRenderer.send("hierarchy:new", parent, name, id),
 	getHierarchy: () => electron.ipcRenderer.invoke("hierarchy:get"),
+	renameobj: (id, newname) => electron.ipcRenderer.send("hierarchy:rename", id, newname),
+	handleRender: (callback) => electron.ipcRenderer.on("render", callback),
+	inspectHierarchyElement: (id) => electron.ipcRenderer.send("hierarchy:select", id),
+	handleObjSelect: (callback) => electron.ipcRenderer.on("selectobj", callback),
+	getAllComponents: () => electron.ipcRenderer.invoke("components:get"),
+	getAllComponentNames: () => electron.ipcRenderer.invoke("components:get:name"),
+	addComponent: (id) => electron.ipcRenderer.send("components:add", id),
 });

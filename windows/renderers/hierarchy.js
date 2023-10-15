@@ -3,6 +3,7 @@ const container = document.getElementById("container")
 var elements = 0;
 var selected = -1;
 var inspector = -1;
+var justClicked = false;
 
 const dontrender = [];
 
@@ -16,21 +17,26 @@ const render = async () => {
 
 const newElem = (elem) => {
 	const div = document.createElement("div");
+	div.id = elem.id;
 	div.classList.add("element");
 	div.innerText = elem.name;
 	// div.style.transform = "translate(" + depth * 15 + "px, 0px)";
 	div.style.zIndex = "3";
 	// if (i % 2) div.classList.add("odd");
 
+	if (elem.id === inspector) div.classList.add("selected");
+
 	div.oncontextmenu = (e) => {
 		// window.electronAPI.newobj(element.id, "New Obj", elements);
 		selected = elem.id;
 	};
 
-	div.onclick = () => {
+	div.addEventListener("click", (e) => {
+		justClicked = true;
 		inspector = elem.id;
+		div.classList.add("selected");
 		window.electronAPI.inspectHierarchyElement(inspector);
-	}
+	});
 
 	return div;
 }
@@ -82,7 +88,6 @@ const renderElem = (parent, elem) => {
  */
 const renderChildren = (parent, id, elem, depth) => {
 	const element = elem.children[id];
-	console.log(element, id)
 
 	for (const childid of element.children) {
 		const child = elem.children[childid];
@@ -102,20 +107,37 @@ const renderChildren = (parent, id, elem, depth) => {
 
 render();
 
-document.getElementById("container").addEventListener("contextmenu", (e) => {
-	console.log("hi");
+container.addEventListener("contextmenu", (e) => {
 	menu.style.transform = "translate(" + e.pageX + "px, " + e.pageY + "px)";
 	menu.style.display = "flex";
 });
 
-addEventListener("click", () => {
-	menu.style.display = "none";
-	inspector = -1;
+addEventListener("click", () => menu.style.display = "none");
+
+container.addEventListener("click", () => {
+	// if (justClicked) {
+		// justClicked = false;
+		// return;
+	// }
+
+	if (!justClicked) {
+		inspector = -1;
+		window.electronAPI.inspectHierarchyElement(-1);
+	}
+
+	for (const element of document.getElementsByClassName("selected")) {
+		if (parseInt(element.id) === inspector) continue;
+		element.classList.remove("selected");
+	}
+
+	justClicked = false;
 })
 
 document.getElementById("newobj").addEventListener("click", (e) => {
-	console.log(selected, elements);
-	window.electronAPI.newobj(selected, "New Obj", elements);
+	const parent = selected === -1 ? (inspector === -1 ? -1 : inspector) : selected
+	window.electronAPI.newobj(parent, "New Obj", elements);
 	selected = -1;
 	render();
 })
+
+window.electronAPI.handleRender(render);

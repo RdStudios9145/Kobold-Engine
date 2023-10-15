@@ -2,8 +2,15 @@ const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
 
+const pages = {};
+
+/**
+ * @typedef {Object} Windows
+ * @property {electron.BrowserWindow[]} e
+ */
+
+/** @type {Windows} */
 const windows = {};
-const renderers = {};
 
 const createWindow = (event, window) => {
 	const winds = electron.BrowserWindow.getAllWindows();
@@ -17,7 +24,9 @@ const createWindow = (event, window) => {
 			preload: path.join(__dirname, "../src/preload.js"),
 		}
 	});
-	wind.loadFile(windows[window.name + ".html"]);
+	wind.loadFile("windows/" + window.name + ".html");
+
+	windows[window.name] = wind;
 	// wind.webContents.send("window-info", renderers[window.name + ".js"].render());
 	return '{}';
 }
@@ -38,11 +47,16 @@ const setup = () => {
 
 	for (const page of pages) {
 		// const filepath = path.join(__dirname, page);
-		windows[page] = "windows/" + page;
+		// pages[page] = "windows/" + page;
 	}
+}
+
+const sendMessiage = (window, messiage, ...args) => {
+	windows[window].webContents.send(messiage, ...args)
 }
 
 module.exports = {
 	createWindow: createWindow,
 	setup: setup,
+	sendMessiage: sendMessiage,
 }

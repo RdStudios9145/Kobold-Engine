@@ -2,6 +2,8 @@ const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
 const exec = require("child_process").exec;
+const manager = require("../windows/manager");
+const ts = require("typescript");
 
 /**
  * @typedef {Object} Obj
@@ -25,6 +27,8 @@ const exec = require("child_process").exec;
  */
 /** @type {CWP} */
 let cwp = {};
+/** @type {Obj} */
+let cso = {};
 
 const getProjects = () => {
 	const dataPath = electron.app.getPath("userData");
@@ -66,11 +70,16 @@ const newProject = (event, name, projPath) => {
 				{
 					name: "assets",
 					position: [0, 0],
-					size: [300, 700]
+					size: [700, 300]
 				},
 				{
 					name: "hierarchy",
 					position: [500, 100],
+					size: [300, 700]
+				},
+				{
+					name: "inspector",
+					position: [700, 100],
 					size: [300, 700]
 				}
 			]
@@ -152,10 +161,14 @@ const getHierarchy = (event) => {
 }
 
 const newobj = (event, parent, name, id) => {
+	/** @type {Object[]} */
+	const components = JSON.parse(getAllComponents());
 	/** @type {Obj} */
 	const obj = {
 		children: [],
-		Components: [],
+		Components: [
+			new (components.find((val) => val.constructor.name === "Transform")),
+		],
 		id: id,
 		name: name,
 	};
@@ -186,6 +199,95 @@ const traverseHierarchy = (current, parent, obj) => {
 	}
 }
 
+const renameObj = (e, id, newName) => {
+	if (id === undefined) return;
+	cwp.hierarchy.children[id].name = newName;
+	manager.sendMessiage("hierarchy", "render");
+}
+
+const selectObj = (e, id) => {
+	const obj = id === -1 ? {} : cwp.hierarchy.children[id];
+	manager.sendMessiage("inspector", "selectobj", obj);
+	cso = obj;
+}
+
+/** @returns {String[]} :) */
+const fsReadDirRecursive = dir =>
+	fs.readdirSync(dir).reduce((files, file) => {
+		const name = path.join(dir, file);
+		const isDirectory = fs.statSync(name).isDirectory();
+		return isDirectory ? [...files, ...fsReadDirRecursive(name)] : [...files, name];
+	}, []);
+
+/** @param {String} filePath */
+const compile = (filePath) => {
+	const file = fs.readFileSync(filePath).toString();
+	console.log(file, "file");
+	const contents = ts.transpileModule(file, { compilerOptions: { module: ts.ModuleKind.Node16 } });
+	console.log(contents);
+	eval(contents.outputText);
+	var name = filePath;
+	name[-2] = "j";
+	console.log(name);
+	name[name.length - 2] = "j";
+	console.log(name, name[name.length - 2]);
+	name.replace(".comp.ts", ".comp.js");
+	console.log(name, name[name.length - 2]);
+	name = filePath.replaceAt(filePath.length - 2, "j");
+	console.log(name, name[name.length - 2]);
+	fs.writeFileSync(name, contents.outputText);
+	const include = require(name);
+	console.log(include);
+	// return global[name];
+	// const classCode = eval(contents.outputText);
+	// console.log(classCode);
+	// return contents;
+}
+
+const getAllComponents = () => {
+	const components = [];
+	const { builtIn, files } = JSON.parse(getAllComponentNames());
+	// console.log(files, "hi");
+
+	for (var i = 0; i < builtIn.length; i++) {
+		// const file = files[i].split("/")
+		// const comp = file[file.length - 1];
+		// components.push(comp.slice(0, comp.length - 8));
+		components.push(compile(builtIn[i]));
+	}
+
+	for (var i = 0; i < files.length; i++) {
+		components.push(compile(files[i]));
+	}
+
+	// return JSON.stringify(components);
+}
+
+const getAllComponentNames = () => {
+	/** @type {String[]} */
+	const builtIn = fsReadDirRecursive(path.join(__dirname, "includes/"))
+		.filter((val) => val.endsWith(".comp.ts"));
+
+	/** @type {String[]} */
+	const files = fsReadDirRecursive(path.join(cwp.path, cwp.name, "Assets/"))
+		.filter((val) => val.endsWith(".comp.ts"));
+
+	const builtInSliced = [];
+	builtIn.forEach((val) => builtInSliced.push(val.split("/").at(-1).slice(0, -8)));
+	// console.log(builtInSliced);
+	// builtIn.forEach((val) => console.log(val.split("/"), val.split("/").at(-1),
+		// val.split("/").at(-1).slice(0, -8)));
+	const filesSliced = [];
+	files.forEach((val) => filesSliced.push(val.split("/").at(-1).slice(0, -8)));
+
+	return JSON.stringify({ builtIn, files, builtInSliced, filesSliced });
+}
+
+const newComponent = (e, id) => {
+	const comp = getAllComponents()[id];
+	cso.Components.push(new comp());
+}
+
 module.exports = {
 	getProjects: getProjects,
 	newProject: newProject,
@@ -200,4 +302,11 @@ module.exports = {
 	newobj: newobj,
 	getHierarchy: getHierarchy,
 	traverseHierarchy: traverseHierarchy,
+	renameObj: renameObj,
+	selectObj: selectObj,
+	getAllComponents,
+	newComponent,
+	fsReadDirRecursive,
+	getAllComponentNames,
+	compile,
 };

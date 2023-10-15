@@ -7,9 +7,13 @@
   "license": "GPL-3.0-only",
   "private": false,
   "devDependencies": {
+    "@types/node": "^20.8.5",
     "electron": "^26.2.1"
   },
   "scripts": {
-	"start": "electron ."
+    "start": "electron ."
+  },
+  "dependencies": {
+    "typescript": "^5.2.2"
   }
 }

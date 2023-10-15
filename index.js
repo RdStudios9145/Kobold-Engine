@@ -4,6 +4,10 @@ const projects = require("./src/projects");
 const window_manager = require("./windows/manager");
 const fs = require("fs");
 
+String.prototype.replaceAt = function(index, replacement) {
+	return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
 const createWindow = () => {
 	const win = new electron.BrowserWindow({
 		width: 800,
@@ -31,9 +35,17 @@ electron.app.whenReady().then(() => {
 	electron.ipcMain.handle("fs:readprojdirsync", projects.readProjDirSync);
 	electron.ipcMain.handle("fs:mkdir", projects.mkdir);
 	electron.ipcMain.handle("fs:writefile", projects.writeFile);
-	electron.ipcMain.on("assets:openfile", projects.openFile);
+
 	electron.ipcMain.on("hierarchy:new", projects.newobj);
+	electron.ipcMain.on("hierarchy:rename", projects.renameObj)
 	electron.ipcMain.handle("hierarchy:get", projects.getHierarchy);
+	electron.ipcMain.on("hierarchy:select", projects.selectObj);
+
+	electron.ipcMain.handle("components:get", projects.getAllComponents);
+	electron.ipcMain.handle("components:get:name", projects.getAllComponentNames);
+	electron.ipcMain.on("components:new", projects.newComponent);
+
+	electron.ipcMain.on("assets:openfile", projects.openFile);
 
 	createWindow();
 
